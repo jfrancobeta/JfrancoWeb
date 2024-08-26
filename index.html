@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jfranco</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- MathJax para renderizar ecuaciones -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!--Titulo -->
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Programación Web</h1>
+        <h3 class="text-center mb-5">Juan David Franco Betancur</h3>
+
+        <!-- Ecuación matemática con Mathjax -->
+        <div class="text-center mb-4">
+            <p class="lead">La ecuación utilizada es la siguiente:</p>
+            <div class="bg-light p-3 rounded shadow">
+                <p id="ecuacion" class="text-center">
+                    $$ Y = \frac{{\cos^{-1}(a - b) + \sin^{-1}(b \times \sqrt{c - d}) + \ln(p)}}{{\sin^{-1}\left(\frac{d}{e} + \sqrt{d - g}\right) \times \ln(u - i) + \cos^{-1}\left(\frac{h}{j}\right)}} $$
+                </p>
+            </div>
+        </div>
+
+        <!-- Botón de procesar -->
+        <div class="text-center mb-4">
+            <button id="botonProcesar" class="btn btn-primary btn-lg">Procesar</button>
+        </div>
+
+        <!-- Tabla de resultados -->
+        <div class="table-responsive mb-5">
+            <table class="table table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Tipo de Error</th>
+                        <th>Total</th>
+                        <th>Porcentaje (%)</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaResultados">
+                    <tr>
+                        <td>Total de errores de arcoseno</td>
+                        <td id="erroresAsin">0</td>
+                        <td id="porcentajeAsin">0%</td>
+                    </tr>
+                    <tr>
+                        <td>Total de errores de arcocoseno</td>
+                        <td id="erroresAcos">0</td>
+                        <td id="porcentajeAcos">0%</td>
+                    </tr>
+                    <tr>
+                        <td>Total de errores de raíz cuadrada</td>
+                        <td id="erroresSqrt">0</td>
+                        <td id="porcentajeSqrt">0%</td>
+                    </tr>
+                    <tr>
+                        <td>Total de errores de división</td>
+                        <td id="erroresDiv">0</td>
+                        <td id="porcentajeDiv">0%</td>
+                    </tr>
+                    <tr>
+                        <td>Total de errores de logaritmo natural</td>
+                        <td id="erroresLog">0</td>
+                        <td id="porcentajeLog">0%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Gráfico de pastel -->
+        <div class="text-center">
+            <canvas id="graficoErrores" width="400" height="400"></canvas>
+        </div>
+
+        <!-- Sección de intentos -->
+        <div class="row text-center mb-4">
+            <div class="col-md-6">
+                <h4>Intentos Fallidos</h4>
+                <p id="intentosFallidos" class="display-4">0</p>
+            </div>
+            <div class="col-md-6">
+                <h4>Intentos Correctos</h4>
+                <p id="intentosCorrectos" class="display-4">0</p>
+            </div>
+        </div>
+
+        <!-- Tabla de valores de las variables -->
+        <div class="table-responsive mb-5 mt-5">
+            <table class="table table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Iteración</th>
+                        <th>a</th>
+                        <th>b</th>
+                        <th>c</th>
+                        <th>d</th>
+                        <th>e</th>
+                        <th>g</th>
+                        <th>h</th>
+                        <th>i</th>
+                        <th>j</th>
+                        <th>p</th>
+                        <th>u</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaVariables">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Función botón procesar
+        document.getElementById('botonProcesar').addEventListener('click', function() {
+            const totalCiclos = 1000;
+            let erroresAsin = 0, erroresAcos = 0, erroresSqrt = 0, erroresDiv = 0, erroresLog = 0;
+            let contenidoTablaVariables = '';
+            let intentosCorrectos = 0, intentosFallidos = 0;
+
+            // Definimos el ciclo de las variables y las generamos
+            for (let i = 0; i < totalCiclos; i++) {
+                const a = Math.random() * 2 - 1;
+                const b = Math.random() * 2 - 1;
+                const c = Math.random() * 2 - 1;
+                const d = Math.random() * 2 - 1;
+                const e = Math.random() * 2 - 1;
+                const g = Math.random() * 2 - 1;
+                const h = Math.random() * 2 - 1;
+                const iVar = Math.random() * 2 - 1;
+                const j = Math.random() * 2 - 1;
+                const p = Math.random() * 2 - 1;
+                const u = Math.random() * 2 - 1;
+
+                let huboError = false;
+
+                // Capturamos errores
+                try {
+                    if (isNaN(Math.acos(a - b))) throw "Error";
+                } catch {
+                    erroresAcos++;
+                    huboError = true;
+                }
+
+                try {
+                    if (isNaN(Math.sqrt(c - d))) {
+                        throw "Error";
+                    } else {
+                        try {
+                            if (isNaN(Math.asin(b + Math.sqrt(c - d)))) throw "Error";
+                        } catch {
+                            erroresAsin++;
+                            huboError = true;
+                        }
+                    }
+                } catch {
+                    erroresSqrt++;
+                    huboError = true;
+                }
+
+                try {
+                    if (isNaN(Math.log(p))) {
+                        throw "Error";
+                    }
+                } catch {
+                    erroresLog++;
+                    huboError = true;
+                }
+
+                const error1 = (d / e) === Infinity || (d / e) === -Infinity;
+                const error2 = isNaN(Math.sqrt(d - g));
+                try {
+                    if (error1 || error2) {
+                        throw "Error";
+                    } else {
+                        try {
+                            if (isNaN(Math.asin((d / e) + Math.sqrt(d - g)))) throw "Error";
+                        } catch {
+                            erroresAsin++;
+                            huboError = true;
+                        }
+                    }
+                } catch {
+                    if (error1) {
+                        erroresDiv++;
+                    } else {
+                        erroresSqrt++;
+                        huboError = true;
+                    }
+                }
+
+                try {
+                    if (isNaN(Math.log(u - iVar))) {
+                        throw "Error";
+                    }
+                } catch {
+                    erroresLog++;
+                    huboError = true;
+                }
+
+                try {
+                    if ((h / j) === Infinity || (h / j) === -Infinity) {
+                        throw "Error";
+                    } else {
+                        try {
+                            if (isNaN(Math.acos(h / j))) throw "Error";
+                        } catch {
+                            erroresAcos++;
+                            huboError = true;
+                        }
+                    }
+                } catch {
+                    erroresDiv++;
+                    huboError = true;
+                }
+
+                if (huboError) {
+                    intentosFallidos++;
+                } else {
+                    intentosCorrectos++;
+                }
+
+                // Generamos el contenido en la tabla de variables
+                contenidoTablaVariables += `<tr>
+                    <td>${i + 1}</td>
+                    <td>${a.toFixed(3)}</td>
+                    <td>${b.toFixed(3)}</td>
+                    <td>${c.toFixed(3)}</td>
+                    <td>${d.toFixed(3)}</td>
+                    <td>${e.toFixed(3)}</td>
+                    <td>${g.toFixed(3)}</td>
+                    <td>${h.toFixed(3)}</td>
+                    <td>${iVar.toFixed(3)}</td>
+                    <td>${j.toFixed(3)}</td>
+                    <td>${p.toFixed(3)}</td>
+                    <td>${u.toFixed(3)}</td>
+                    <td style="background-color: ${huboError ? 'red' : 'green'}; color: white;">
+                        ${huboError ? 'Error' : 'Sin Error'}
+                    </td>
+                </tr>`;
+            }
+            // Rellenamos datos obtenidos en el HTML
+            document.getElementById('intentosFallidos').textContent = intentosFallidos;
+            document.getElementById('intentosCorrectos').textContent = intentosCorrectos;
+            document.getElementById('tablaVariables').innerHTML = contenidoTablaVariables;
+
+            const totalErrores = erroresAsin + erroresAcos + erroresSqrt + erroresDiv + erroresLog;
+            const porcentajeAsin = (erroresAsin / totalErrores * 100).toFixed(2);
+            const porcentajeAcos = (erroresAcos / totalErrores * 100).toFixed(2);
+            const porcentajeSqrt = (erroresSqrt / totalErrores * 100).toFixed(2);
+            const porcentajeDiv = (erroresDiv / totalErrores * 100).toFixed(2);
+            const porcentajeLog = (erroresLog / totalErrores * 100).toFixed(2);
+
+            document.getElementById('erroresAsin').textContent = erroresAsin;
+            document.getElementById('porcentajeAsin').textContent = porcentajeAsin + '%';
+            document.getElementById('erroresAcos').textContent = erroresAcos;
+            document.getElementById('porcentajeAcos').textContent = porcentajeAcos + '%';
+            document.getElementById('erroresSqrt').textContent = erroresSqrt;
+            document.getElementById('porcentajeSqrt').textContent = porcentajeSqrt + '%';
+            document.getElementById('erroresDiv').textContent = erroresDiv;
+            document.getElementById('porcentajeDiv').textContent = porcentajeDiv + '%';
+            document.getElementById('erroresLog').textContent = erroresLog;
+            document.getElementById('porcentajeLog').textContent = porcentajeLog + '%';
+
+            // Gráfico
+            const ctx = document.getElementById('graficoErrores').getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Arcoseno', 'Arcocoseno', 'Raíz Cuadrada', 'División', 'Logaritmo Natural'],
+                    datasets: [{
+                        data: [erroresAsin, erroresAcos, erroresSqrt, erroresDiv, erroresLog],
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                }
+            });
+        });
+    </script>
+</body>
+</html>
